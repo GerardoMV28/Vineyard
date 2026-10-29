@@ -20,11 +20,11 @@ AnimationClip:
   m_PPtrCurves:
   - serializedVersion: 2
     curve:
-    - time: 0.016666668
+    - time: 0.083333336
       value: {fileID: -8296385383580801948, guid: 0877c6a2eb8184a4a8d58db0a7bb6546, type: 3}
-    - time: 0.16666667
+    - time: 0.25
       value: {fileID: 3218353051568008401, guid: 0877c6a2eb8184a4a8d58db0a7bb6546, type: 3}
-    - time: 0.4
+    - time: 0.43333334
       value: {fileID: 6971375644381031630, guid: 0877c6a2eb8184a4a8d58db0a7bb6546, type: 3}
     - time: 0.65
       value: {fileID: -3714987382563562326, guid: 0877c6a2eb8184a4a8d58db0a7bb6546, type: 3}

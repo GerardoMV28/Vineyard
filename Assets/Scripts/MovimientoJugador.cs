@@ -1,11 +1,11 @@
 using UnityEngine;
-using UnityEngine.InputSystem; // Importante para el nuevo Input System
+using UnityEngine.InputSystem;
 
 public class MovimientoJugador : MonoBehaviour
 {
     [Header("Ajustes de Movimiento")]
-    public float velocidadMovimiento = 5f;
-    public float fuerzaSalto = 7f;
+    public float velocidadMovimiento = 8f;
+    public float fuerzaSalto = 10f;
 
     [Header("Detección de Suelo")]
     public Transform comprobadorSuelo;
@@ -14,6 +14,7 @@ public class MovimientoJugador : MonoBehaviour
 
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
+    private Animator animator; // Componente Animator
     private float movimientoHorizontal;
     private bool enElSuelo;
 
@@ -21,11 +22,11 @@ public class MovimientoJugador : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>(); // Obtener referencia al Animator
     }
 
     void Update()
     {
-        // Controles de teclado con el nuevo Input System
         movimientoHorizontal = 0f;
 
         if (Keyboard.current.aKey.isPressed || Keyboard.current.leftArrowKey.isPressed)
@@ -37,7 +38,7 @@ public class MovimientoJugador : MonoBehaviour
             movimientoHorizontal = 1f;
         }
 
-        // Voltear el sprite según la dirección
+        // Girar el sprite
         if (movimientoHorizontal > 0)
         {
             spriteRenderer.flipX = false;
@@ -47,13 +48,19 @@ public class MovimientoJugador : MonoBehaviour
             spriteRenderer.flipX = true;
         }
 
-        // Detectar contacto con el suelo
+        // Pasar el valor de movimiento al Animator (Mathf.Abs vuelve el número positivo)
+        if (animator != null)
+        {
+            animator.SetFloat("Velocidad", Mathf.Abs(movimientoHorizontal));
+        }
+
+        // Detectar suelo
         if (comprobadorSuelo != null)
         {
             enElSuelo = Physics2D.OverlapCircle(comprobadorSuelo.position, radioComprobacion, capaSuelo);
         }
 
-        // Salto con la barra espaciadora
+        // Salto
         if (Keyboard.current.spaceKey.wasPressedThisFrame && enElSuelo)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, fuerzaSalto);
