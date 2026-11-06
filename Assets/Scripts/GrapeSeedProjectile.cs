@@ -15,8 +15,8 @@ public class GrapeSeedProjectile : MonoBehaviour
     [Tooltip("Tiempo máximo de vida en segundos")]
     public float lifeTime = 3.5f;
 
-    [Tooltip("Daño que causa al impactar al jugador")]
-    public int damage = 1;
+    [Tooltip("Puntos de vida (HP) que resta al impactar al jugador (sobre base de 100 HP)")]
+    public int damage = 20;
 
     [Header("Tamaño y Animación")]
     [Tooltip("Escala de la semilla")]
@@ -114,18 +114,20 @@ public class GrapeSeedProjectile : MonoBehaviour
             return;
 
         // Si impacta al Jugador
-        PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
+        HealthSystem healthSystem = other.GetComponent<HealthSystem>();
         MovimientoJugador playerMove = other.GetComponent<MovimientoJugador>();
-        if (other.CompareTag("Player") || playerHealth != null || playerMove != null)
+        if (other.CompareTag("Player") || healthSystem != null || playerMove != null)
         {
-            if (playerHealth == null && playerMove != null)
+            if (healthSystem == null && playerMove != null)
             {
-                playerHealth = playerMove.gameObject.AddComponent<PlayerHealth>();
+                healthSystem = playerMove.gameObject.GetComponent<HealthSystem>();
+                if (healthSystem == null)
+                    healthSystem = playerMove.gameObject.AddComponent<HealthSystem>();
             }
 
-            if (playerHealth != null)
+            if (healthSystem != null)
             {
-                playerHealth.TakeDamageFromPosition(damage, transform.position);
+                healthSystem.TakeDamageFromPosition(damage, transform.position);
             }
 
             ImpactAndDestroy();

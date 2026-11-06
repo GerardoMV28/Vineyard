@@ -173,6 +173,6 @@ MonoBehaviour:
   speed: 7.5
   maxDistance: 7.5
   lifeTime: 3.5
-  damage: 1
+  damage: 20
   seedScale: 0.85
   spinSpeed: 240

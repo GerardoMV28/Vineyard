@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2953063097009000092}
   - component: {fileID: 1673619300791202559}
   - component: {fileID: 8895975225009866249}
+  - component: {fileID: -4507114260452120697}
   m_Layer: 0
   m_Name: MerlotGrape
   m_TagString: Enemy
@@ -205,6 +206,22 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 86e5b6095d2ed1142ba1691d5de7eb7d, type: 3}
   - {fileID: 21300000, guid: 4dfe552e7cf6de74da50b332902ad6b2, type: 3}
   idleFrameRate: 4.5
+--- !u!114 &-4507114260452120697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4456390954888771394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9d0e1f2a3b44567c3d4e5f6a7b8c933, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyDeathFeedback
+  juiceSplashPrefab: {fileID: 1176718805702214395, guid: 5943a153493b0d14b941df6b490aa367, type: 3}
+  dropletCount: 24
+  primaryJuiceColor: {r: 0.58, g: 0.12, b: 0.68, a: 1}
+  secondaryJuiceColor: {r: 0.85, g: 0.22, b: 0.48, a: 1}
 --- !u!1 &5268447669399480491
 GameObject:
   m_ObjectHideFlags: 0

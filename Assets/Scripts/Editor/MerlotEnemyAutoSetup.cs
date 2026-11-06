@@ -71,11 +71,11 @@ public static class MerlotEnemyAutoSetup
         GameObject seedPrefab = CreateOrUpdateSeedPrefab(seedSprite);
         GameObject merlotPrefab = CreateOrUpdateMerlotPrefab(merlotSprites, seedPrefab);
 
-        // Asegurar que el Jugador tenga PlayerHealth
+        // Asegurar que el Jugador tenga HealthSystem (100 HP)
         MovimientoJugador player = UnityEngine.Object.FindFirstObjectByType<MovimientoJugador>();
-        if (player != null && player.GetComponent<PlayerHealth>() == null)
+        if (player != null && player.GetComponent<HealthSystem>() == null)
         {
-            player.gameObject.AddComponent<PlayerHealth>();
+            player.gameObject.AddComponent<HealthSystem>();
             EditorUtility.SetDirty(player.gameObject);
         }
 
@@ -329,7 +329,7 @@ public static class MerlotEnemyAutoSetup
         GrapeSeedProjectile proj = temp.AddComponent<GrapeSeedProjectile>();
         proj.speed = 7.5f;
         proj.maxDistance = 7.5f;
-        proj.damage = 1;
+        proj.damage = 20;
         proj.seedScale = 0.85f;
 
         temp.transform.localScale = new Vector3(0.85f, 0.85f, 1f);
@@ -371,6 +371,13 @@ public static class MerlotEnemyAutoSetup
         enemy.idleSprites = new Sprite[] { s[0], s[1], s[2] };
         enemy.attackSprites = new Sprite[] { s[8], s[9], s[7], s[3], s[5] };
         enemy.hurtSprites = new Sprite[] { s[4], s[6] };
+
+        EnemyDeathFeedback deathFeedback = temp.AddComponent<EnemyDeathFeedback>();
+        ParticleSystem splashPrefab = AssetDatabase.LoadAssetAtPath<ParticleSystem>("Assets/Prefabs/GrapeJuiceSplash.prefab");
+        if (splashPrefab != null)
+        {
+            deathFeedback.juiceSplashPrefab = splashPrefab;
+        }
 
         GameObject prefab = PrefabUtility.SaveAsPrefabAsset(temp, MerlotPrefabPath);
         UnityEngine.Object.DestroyImmediate(temp);

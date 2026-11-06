@@ -80,9 +80,9 @@ public class MerlotGrapeEnemy : MonoBehaviour
         if (playerMove != null)
         {
             playerTransform = playerMove.transform;
-            if (playerMove.GetComponent<PlayerHealth>() == null)
+            if (playerMove.GetComponent<HealthSystem>() == null)
             {
-                playerMove.gameObject.AddComponent<PlayerHealth>();
+                playerMove.gameObject.AddComponent<HealthSystem>();
             }
         }
 
@@ -389,6 +389,17 @@ public class MerlotGrapeEnemy : MonoBehaviour
             yield return null;
         }
 
+        // Disparar retroalimentación visual de salpicadura de jugo de uva antes de destruir
+        EnemyDeathFeedback deathFeedback = GetComponent<EnemyDeathFeedback>();
+        if (deathFeedback != null)
+        {
+            deathFeedback.PlayDeathFeedback();
+        }
+        else
+        {
+            EnemyDeathFeedback.SpawnRuntimeGrapeJuiceSplash(transform.position);
+        }
+
         Destroy(gameObject);
     }
 
@@ -398,11 +409,11 @@ public class MerlotGrapeEnemy : MonoBehaviour
 
         if (collision.gameObject.CompareTag("Player") || collision.gameObject.GetComponent<MovimientoJugador>() != null)
         {
-            PlayerHealth ph = collision.gameObject.GetComponent<PlayerHealth>();
-            if (ph == null)
-                ph = collision.gameObject.AddComponent<PlayerHealth>();
+            HealthSystem hs = collision.gameObject.GetComponent<HealthSystem>();
+            if (hs == null)
+                hs = collision.gameObject.AddComponent<HealthSystem>();
 
-            ph.TakeDamageFromPosition(1, transform.position);
+            hs.TakeDamageFromPosition(20f, transform.position);
         }
     }
 
