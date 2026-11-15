@@ -206,7 +206,9 @@ public class CorkProjectile : MonoBehaviour
         if (other.GetComponent<CorkProjectile>() != null)
             return;
 
-        bool isEnemy = other.CompareTag("Enemy") || other.GetComponent<MerlotGrapeEnemy>() != null;
+        bool isEnemy = other.CompareTag("Enemy") ||
+                       other.GetComponent<MerlotGrapeEnemy>() != null ||
+                       other.GetComponent<EnemigoCabSau>() != null;
         bool isObstacle = other.CompareTag("Obstacle") || other.CompareTag("Ground") ||
                           other.layer == LayerMask.NameToLayer("Suelo");
 

@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(AudioSource))]
 public class PlayerAttack : MonoBehaviour
 {
     [Header("Referencias del Disparo")]
@@ -10,6 +11,17 @@ public class PlayerAttack : MonoBehaviour
 
     [Tooltip("Punto desde donde sale el corcho (hijo del Player)")]
     public Transform firePoint;
+
+    [Header("Audio (SFX de Ataque)")]
+    [Tooltip("Componente AudioSource del jugador (se asigna automáticamente si está vacío)")]
+    public AudioSource audioSource;
+
+    [Tooltip("Sonido que se reproduce al lanzar el corcho (asigna tu AudioClip en el Inspector)")]
+    public AudioClip sonidoLanzarCorcho;
+
+    [Range(0f, 1f)]
+    [Tooltip("Volumen del sonido al disparar el corcho")]
+    public float volumenDisparo = 0.85f;
 
     [Header("Configuración de Ataque")]
     [Tooltip("Tiempo de espera entre disparos en segundos")]
@@ -44,6 +56,14 @@ public class PlayerAttack : MonoBehaviour
         if (animator == null)
             animator = GetComponent<Animator>();
 
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
+
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 0f;
+
         originalScale = transform.localScale;
     }
 
@@ -75,6 +95,9 @@ public class PlayerAttack : MonoBehaviour
 
     private void Update()
     {
+        if (Time.timeScale <= 0f)
+            return;
+
         UpdateFacingDirection();
         UpdateFirePointPosition();
 
@@ -135,6 +158,18 @@ public class PlayerAttack : MonoBehaviour
 
     private void Shoot()
     {
+        // 0. Reproducir sonido de lanzar corcho (SFX)
+        if (sonidoLanzarCorcho != null)
+        {
+            if (audioSource == null)
+                audioSource = GetComponent<AudioSource>();
+
+            if (audioSource != null)
+                audioSource.PlayOneShot(sonidoLanzarCorcho, volumenDisparo);
+            else
+                AudioSource.PlayClipAtPoint(sonidoLanzarCorcho, transform.position, volumenDisparo);
+        }
+
         // 1. Disparar animación en el Animator (si tiene el parámetro Attack)
         if (animator != null && HasParameter(animator, attackTriggerName))
         {

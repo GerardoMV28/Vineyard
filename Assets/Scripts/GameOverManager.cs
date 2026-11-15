@@ -36,8 +36,12 @@ public class GameOverManager : MonoBehaviour
         }
         Instance = this;
 
-        // Asegurar que el tiempo corra normalmente al iniciar/recargar el nivel
-        Time.timeScale = 1f;
+        // Asegurar que el tiempo corra normalmente si el Opener no está activo
+        TitleScreenOpener opener = FindFirstObjectByType<TitleScreenOpener>();
+        if (opener == null || !opener.enabled || TitleScreenOpener.OmitirOpenerEnReinicio)
+        {
+            Time.timeScale = 1f;
+        }
 
         EnsureEventSystemExists();
 
@@ -126,9 +130,13 @@ public class GameOverManager : MonoBehaviour
     /// </summary>
     public void RestartCurrentLevel()
     {
+        TitleScreenOpener.OmitirOpenerEnReinicio = true;
         Time.timeScale = 1f;
         Scene currentScene = SceneManager.GetActiveScene();
-        SceneManager.LoadScene(currentScene.buildIndex);
+        if (currentScene.buildIndex >= 0)
+            SceneManager.LoadScene(currentScene.buildIndex);
+        else
+            SceneManager.LoadScene(currentScene.name);
     }
 
     private void SetupButtonHoverEffects(GameObject btnObj)

@@ -3,12 +3,40 @@ using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(Collider2D))]
+[RequireComponent(typeof(AudioSource))]
 public class MerlotGrapeEnemy : MonoBehaviour
 {
-    [Header("Salud de la Uva Merlot")]
-    [Tooltip("Cantidad de corchazos necesarios para derrotar a la uva")]
-    public int maxHealth = 3;
+    [Header("Salud y Puntuación de la Uva")]
+    [Tooltip("Cantidad de impactos necesarios para derrotar a la uva")]
+    public int maxHealth = 2;
     public int currentHealth;
+
+    [Tooltip("Puntos que suma al jugador al ser eliminada (para la pantalla de Nivel Completado)")]
+    public int puntosAlDerrotar = 100;
+
+    [Header("Daño al Saltar Sobre Ella (Stomp)")]
+    [Tooltip("Permite dañar/aplastar a la uva cuando el jugador salta sobre su cabeza")]
+    public bool recibirDanoAlSaltarEncima = true;
+
+    [Tooltip("Daño que recibe la uva cuando el jugador le salta encima")]
+    public int danoPorSaltoEncima = 2;
+
+    [Tooltip("Impulso de rebote hacia arriba que recibe el jugador al pisar a la uva")]
+    public float fuerzaReboteJugador = 9.5f;
+
+    [Header("Audio (SFX de la Uva)")]
+    [Tooltip("Componente AudioSource de la uva (se asigna automáticamente)")]
+    public AudioSource audioSource;
+
+    [Tooltip("Sonido cuando la uva dispara/escupe una semilla (asigna tu AudioClip en el Inspector)")]
+    public AudioClip sonidoDisparoSemilla;
+
+    [Tooltip("Sonido de impacto o muerte cuando recibe daño o es eliminada (asigna tu AudioClip en el Inspector)")]
+    public AudioClip sonidoImpactoOMuerte;
+
+    [Range(0f, 1f)]
+    [Tooltip("Volumen de los efectos de sonido de la uva")]
+    public float volumenAudio = 0.85f;
 
     [Header("Detección y Disparo de Semillas")]
     [Tooltip("Distancia a la que detecta al jugador para escupirle semillas")]
@@ -67,6 +95,15 @@ public class MerlotGrapeEnemy : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
+
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 0f;
+
         baseScale = transform.localScale;
         startPos = transform.position;
     }
@@ -261,6 +298,18 @@ public class MerlotGrapeEnemy : MonoBehaviour
 
     private void SpawnSeedFromMouth()
     {
+        // Reproducir sonido cuando la uva dispara una semilla
+        if (sonidoDisparoSemilla != null)
+        {
+            if (audioSource == null)
+                audioSource = GetComponent<AudioSource>();
+
+            if (audioSource != null)
+                audioSource.PlayOneShot(sonidoDisparoSemilla, volumenAudio);
+            else
+                CorazonVida.ReproducirSonidoPersistente(sonidoDisparoSemilla, transform.position, volumenAudio);
+        }
+
         Vector3 spawnPos = mouthPoint != null
             ? mouthPoint.position
             : transform.position + new Vector3(facingDirection * 0.42f, 0.04f, 0f);
@@ -296,14 +345,27 @@ public class MerlotGrapeEnemy : MonoBehaviour
     }
 
     /// <summary>
-    /// Llamado automáticamente cuando el corcho del jugador impacta a la uva.
+    /// Llamado automáticamente cuando el corcho del jugador impacta a la uva o cuando el jugador salta sobre ella.
     /// </summary>
     public void TakeDamage(int damageAmount)
     {
         if (isDead) return;
 
         currentHealth -= damageAmount;
-        Debug.Log($"[MerlotGrapeEnemy] ¡Corchazo recibido en {name}! Vida: {currentHealth}/{maxHealth}");
+        Debug.Log($"[EnemigoUva] ¡Impacto recibido en {name}! Vida: {currentHealth}/{maxHealth}");
+
+        // Reproducir sonido de impacto / muerte
+        if (sonidoImpactoOMuerte != null)
+        {
+            if (currentHealth <= 0)
+            {
+                CorazonVida.ReproducirSonidoPersistente(sonidoImpactoOMuerte, transform.position, volumenAudio);
+            }
+            else if (audioSource != null)
+            {
+                audioSource.PlayOneShot(sonidoImpactoOMuerte, volumenAudio);
+            }
+        }
 
         if (currentHealth <= 0)
         {
@@ -355,6 +417,9 @@ public class MerlotGrapeEnemy : MonoBehaviour
         isDead = true;
         isAttacking = false;
         isHurt = false;
+
+        // Registrar la eliminación de esta uva para el puntaje de "¡Nivel 1 Completado!"
+        MetaNivel.RegistrarUvaEliminada(puntosAlDerrotar);
 
         Collider2D col = GetComponent<Collider2D>();
         if (col != null) col.enabled = false;
@@ -409,6 +474,37 @@ public class MerlotGrapeEnemy : MonoBehaviour
 
         if (collision.gameObject.CompareTag("Player") || collision.gameObject.GetComponent<MovimientoJugador>() != null)
         {
+            // Verificar si el jugador cayó desde arriba sobre la uva (Stomp)
+            bool pisadoDesdeArriba = false;
+            if (recibirDanoAlSaltarEncima)
+            {
+                foreach (ContactPoint2D contact in collision.contacts)
+                {
+                    if (contact.normal.y < -0.45f)
+                    {
+                        pisadoDesdeArriba = true;
+                        break;
+                    }
+                }
+
+                if (!pisadoDesdeArriba && collision.transform.position.y > transform.position.y + 0.42f)
+                {
+                    pisadoDesdeArriba = true;
+                }
+            }
+
+            if (pisadoDesdeArriba)
+            {
+                Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
+                if (playerRb != null)
+                {
+                    playerRb.linearVelocity = new Vector2(playerRb.linearVelocity.x, fuerzaReboteJugador);
+                }
+
+                TakeDamage(Mathf.Max(1, danoPorSaltoEncima));
+                return;
+            }
+
             HealthSystem hs = collision.gameObject.GetComponent<HealthSystem>();
             if (hs == null)
                 hs = collision.gameObject.AddComponent<HealthSystem>();

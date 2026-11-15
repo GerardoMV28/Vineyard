@@ -13,6 +13,7 @@ public static class MerlotEnemyAutoSetup
     private const string SeedSpritePath = "Assets/Sprites/Enemigos/Merlot/GrapeSeed.png";
     private const string SeedPrefabPath = "Assets/Prefabs/GrapeSeed.prefab";
     private const string MerlotPrefabPath = "Assets/Prefabs/MerlotGrape.prefab";
+    private const string EnemigoUvaPrefabPath = "Assets/Prefabs/EnemigoUva.prefab";
 
     // Ruta donde se extrajo tu archivo Merlotgrapes.zip
     private const string ExtractedZipObjectsDir =
@@ -26,6 +27,10 @@ public static class MerlotEnemyAutoSetup
     private static void RunIfNeeded()
     {
         if (EditorApplication.isPlayingOrWillChangePlaymode)
+            return;
+
+        string activeSceneName = EditorSceneManager.GetActiveScene().name;
+        if (!string.IsNullOrEmpty(activeSceneName) && activeSceneName.Contains("Nivel2"))
             return;
 
         bool needsMerlotPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(MerlotPrefabPath) == null;
@@ -341,7 +346,7 @@ public static class MerlotEnemyAutoSetup
 
     private static GameObject CreateOrUpdateMerlotPrefab(Sprite[] s, GameObject seedPrefab)
     {
-        GameObject temp = new GameObject("MerlotGrape");
+        GameObject temp = new GameObject("EnemigoUva");
         temp.tag = "Enemy";
 
         SpriteRenderer sr = temp.AddComponent<SpriteRenderer>();
@@ -358,16 +363,27 @@ public static class MerlotEnemyAutoSetup
         col.size = new Vector2(1.05f, 1.35f);
         col.offset = new Vector2(0f, -0.05f);
 
+        AudioSource audioSrc = temp.AddComponent<AudioSource>();
+        audioSrc.playOnAwake = false;
+        audioSrc.spatialBlend = 0f;
+
         GameObject mouth = new GameObject("MouthPoint");
         mouth.transform.SetParent(temp.transform);
         mouth.transform.localPosition = new Vector3(0.42f, 0.04f, 0f);
 
-        MerlotGrapeEnemy enemy = temp.AddComponent<MerlotGrapeEnemy>();
-        enemy.maxHealth = 3;
-        enemy.detectionRange = 8.5f;
-        enemy.attackInterval = 2.2f;
+        EnemigoUva enemy = temp.AddComponent<EnemigoUva>();
+        enemy.maxHealth = 2;
+        enemy.puntosAlDerrotar = 100;
+        enemy.recibirDanoAlSaltarEncima = true;
+        enemy.danoPorSaltoEncima = 2;
+        enemy.fuerzaReboteJugador = 9.5f;
+        enemy.detectionRange = 8.0f;
+        enemy.attackInterval = 2.3f;
         enemy.seedPrefab = seedPrefab;
         enemy.mouthPoint = mouth.transform;
+        enemy.audioSource = audioSrc;
+        enemy.sonidoDisparoSemilla = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX_DisparoSemilla.wav");
+        enemy.sonidoImpactoOMuerte = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX_ImpactoUva.wav");
         enemy.idleSprites = new Sprite[] { s[0], s[1], s[2] };
         enemy.attackSprites = new Sprite[] { s[8], s[9], s[7], s[3], s[5] };
         enemy.hurtSprites = new Sprite[] { s[4], s[6] };
@@ -379,68 +395,80 @@ public static class MerlotEnemyAutoSetup
             deathFeedback.juiceSplashPrefab = splashPrefab;
         }
 
-        GameObject prefab = PrefabUtility.SaveAsPrefabAsset(temp, MerlotPrefabPath);
+        PrefabUtility.SaveAsPrefabAsset(temp, MerlotPrefabPath);
+        GameObject prefab = PrefabUtility.SaveAsPrefabAsset(temp, EnemigoUvaPrefabPath);
         UnityEngine.Object.DestroyImmediate(temp);
         return prefab;
     }
 
-    private static void SpawnGrapesInScene(GameObject merlotPrefabOverride = null)
+    public static void SpawnGrapesInScene(GameObject merlotPrefabOverride = null)
     {
-        GameObject merlotPrefab = merlotPrefabOverride != null
+        GameObject uvaPrefab = merlotPrefabOverride != null
             ? merlotPrefabOverride
-            : AssetDatabase.LoadAssetAtPath<GameObject>(MerlotPrefabPath);
+            : AssetDatabase.LoadAssetAtPath<GameObject>(EnemigoUvaPrefabPath);
 
-        if (merlotPrefab == null) return;
+        if (uvaPrefab == null)
+            uvaPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(MerlotPrefabPath);
 
-        GameObject container = GameObject.Find("Enemigos_UvasMerlot");
+        if (uvaPrefab == null) return;
+
+        GameObject oldContainer = GameObject.Find("Enemigos_UvasMerlot");
+        if (oldContainer != null)
+        {
+            UnityEngine.Object.DestroyImmediate(oldContainer);
+        }
+
+        GameObject container = GameObject.Find("Enemigos_Nivel1");
         if (container != null)
         {
             UnityEngine.Object.DestroyImmediate(container);
         }
 
-        container = new GameObject("Enemigos_UvasMerlot");
+        container = new GameObject("Enemigos_Nivel1");
 
-        Vector3 playerPos = new Vector3(-4.26f, 7.08f, 0f);
-        MovimientoJugador player = UnityEngine.Object.FindFirstObjectByType<MovimientoJugador>();
-        if (player != null)
+        // Posiciones estratégicas a lo largo de todo el Nivel 1 (desde X = -23.5 hasta X = 91.5)
+        // x = posición horizontal en el mapa, y = altura desde donde se lanza el Raycast hacia abajo para posarse en suelo/plataforma
+        Vector2[] strategicSpawns = new Vector2[]
         {
-            playerPos = player.transform.position;
-        }
-
-        Vector2[] relativeOffsets = new Vector2[]
-        {
-            new Vector2(6.5f, 0.2f),   // 1ra Uva: cerca del inicio para probar el combate de inmediato
-            new Vector2(14.5f, 0.2f),  // 2da Uva: más adelante en el camino
-            new Vector2(23.0f, 0.2f),  // 3ra Uva: zona media
-            new Vector2(32.5f, 0.2f),  // 4ta Uva: más adelante
-            new Vector2(-11.0f, 0.2f)  // 5ta Uva: hacia el lado izquierdo del viñedo
+            new Vector2(-23.5f, 9.0f),   // 1. Camino inicial (suelo plano Y=5)
+            new Vector2(-12.5f, 10.0f),  // 2. Primer escalón del viñedo (suelo Y=6)
+            new Vector2(-1.5f, 15.5f),   // 3. Plataforma elevada superior (Y=12.5)
+            new Vector2(8.0f, 11.0f),    // 4. Montículo central (plataforma Y=8)
+            new Vector2(20.5f, 10.0f),   // 5. Camino medio del viñedo (suelo Y=6)
+            new Vector2(35.0f, 13.5f),   // 6. Cima de la colina media (plataforma Y=10)
+            new Vector2(57.5f, 13.5f),   // 7. Plataforma puente elevada (Y=10.8)
+            new Vector2(91.5f, 8.2f)     // 8. Terraza final antes de la meta (suelo Y=5)
         };
 
         int sueloMask = LayerMask.GetMask("Suelo");
+        MovimientoJugador player = UnityEngine.Object.FindFirstObjectByType<MovimientoJugador>();
 
-        for (int i = 0; i < relativeOffsets.Length; i++)
+        for (int i = 0; i < strategicSpawns.Length; i++)
         {
-            Vector3 targetPos = new Vector3(
-                playerPos.x + relativeOffsets[i].x,
-                playerPos.y + relativeOffsets[i].y,
-                0f
+            float spawnX = strategicSpawns[i].x;
+            float rayStartY = strategicSpawns[i].y;
+            Vector3 targetPos = new Vector3(spawnX, rayStartY - 2f, 0f);
+
+            RaycastHit2D hit = Physics2D.Raycast(
+                new Vector2(spawnX, rayStartY),
+                Vector2.down,
+                18f,
+                sueloMask != 0 ? sueloMask : ~0
             );
 
-            Vector2 rayOrigin = new Vector2(targetPos.x, playerPos.y + 8f);
-            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.down, 25f, sueloMask != 0 ? sueloMask : ~0);
             if (hit.collider != null && hit.collider.gameObject != (player != null ? player.gameObject : null))
             {
-                targetPos.y = hit.point.y + 0.75f;
+                targetPos.y = hit.point.y + 0.72f;
             }
 
-            GameObject grapeInstance = (GameObject)PrefabUtility.InstantiatePrefab(merlotPrefab);
-            grapeInstance.name = $"UvaMerlot_{i + 1}";
+            GameObject grapeInstance = (GameObject)PrefabUtility.InstantiatePrefab(uvaPrefab);
+            grapeInstance.name = $"EnemigoUva_{i + 1}";
             grapeInstance.transform.SetParent(container.transform);
             grapeInstance.transform.position = targetPos;
         }
 
         EditorSceneManager.MarkSceneDirty(container.scene);
-        Debug.Log("[Vineyard] ¡Se colocaron 5 Uvas Merlot en el mapa listas para el combate!");
+        Debug.Log("[Vineyard] ¡Se distribuyeron 8 instancias de EnemigoUva estratégicamente a lo largo del Nivel 1!");
     }
 }
 #endif
