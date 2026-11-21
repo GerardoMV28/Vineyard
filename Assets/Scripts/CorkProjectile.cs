@@ -218,8 +218,23 @@ public class CorkProjectile : MonoBehaviour
         if (isEnemy)
         {
             Debug.Log($"[CorkProjectile] ¡Corchazo a enemigo: {other.name}! (Daño: {damage})");
-            other.SendMessage("TakeDamage", damage, SendMessageOptions.DontRequireReceiver);
-            other.SendMessage("RecibirDano", damage, SendMessageOptions.DontRequireReceiver);
+
+            MerlotGrapeEnemy merlot = other.GetComponent<MerlotGrapeEnemy>();
+            EnemigoCabSau cabSau = other.GetComponent<EnemigoCabSau>();
+
+            if (merlot != null)
+            {
+                merlot.TakeDamage(damage);
+            }
+            else if (cabSau != null)
+            {
+                cabSau.TakeDamage(damage);
+            }
+            else
+            {
+                other.SendMessage("TakeDamage", damage, SendMessageOptions.DontRequireReceiver);
+            }
+
             ImpactAndDestroy();
         }
         else if (isObstacle || !isTriggerCollider)

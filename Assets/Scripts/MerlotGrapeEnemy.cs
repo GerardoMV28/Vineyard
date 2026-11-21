@@ -8,7 +8,7 @@ public class MerlotGrapeEnemy : MonoBehaviour
 {
     [Header("Salud y Puntuación de la Uva")]
     [Tooltip("Cantidad de impactos necesarios para derrotar a la uva")]
-    public int maxHealth = 2;
+    public int maxHealth = 3;
     public int currentHealth;
 
     [Tooltip("Puntos que suma al jugador al ser eliminada (para la pantalla de Nivel Completado)")]
@@ -19,7 +19,7 @@ public class MerlotGrapeEnemy : MonoBehaviour
     public bool recibirDanoAlSaltarEncima = true;
 
     [Tooltip("Daño que recibe la uva cuando el jugador le salta encima")]
-    public int danoPorSaltoEncima = 2;
+    public int danoPorSaltoEncima = 1;
 
     [Tooltip("Impulso de rebote hacia arriba que recibe el jugador al pisar a la uva")]
     public float fuerzaReboteJugador = 9.5f;

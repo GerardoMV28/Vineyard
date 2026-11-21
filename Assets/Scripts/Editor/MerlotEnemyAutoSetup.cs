@@ -372,10 +372,10 @@ public static class MerlotEnemyAutoSetup
         mouth.transform.localPosition = new Vector3(0.42f, 0.04f, 0f);
 
         EnemigoUva enemy = temp.AddComponent<EnemigoUva>();
-        enemy.maxHealth = 2;
+        enemy.maxHealth = 3;
         enemy.puntosAlDerrotar = 100;
         enemy.recibirDanoAlSaltarEncima = true;
-        enemy.danoPorSaltoEncima = 2;
+        enemy.danoPorSaltoEncima = 1;
         enemy.fuerzaReboteJugador = 9.5f;
         enemy.detectionRange = 8.0f;
         enemy.attackInterval = 2.3f;

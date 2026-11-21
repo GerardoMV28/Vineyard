@@ -252,7 +252,7 @@ public static class Nivel2AndCabSauAutoSetup
             }
 
             AssetDatabase.ImportAsset(targetPath, ImportAssetOptions.ForceSynchronousImport);
-            ConfigurePixelArtSprite(targetPath, 42f);
+            ConfigurePixelArtSprite(targetPath, 26f);
             sprites[i - 1] = AssetDatabase.LoadAssetAtPath<Sprite>(targetPath);
         }
 
@@ -417,8 +417,8 @@ public static class Nivel2AndCabSauAutoSetup
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 
         BoxCollider2D col = temp.AddComponent<BoxCollider2D>();
-        col.size = new Vector2(0.76f, 0.78f);
-        col.offset = new Vector2(0f, -0.04f);
+        col.size = new Vector2(1.18f, 1.26f);
+        col.offset = new Vector2(0f, -0.06f);
 
         Animator anim = temp.AddComponent<Animator>();
         anim.runtimeAnimatorController = controller;
@@ -430,7 +430,7 @@ public static class Nivel2AndCabSauAutoSetup
         // Crear objeto hijo DetectorBorde apuntando hacia abajo a la capa Suelo
         GameObject detectorObj = new GameObject("DetectorBorde");
         detectorObj.transform.SetParent(temp.transform);
-        detectorObj.transform.localPosition = new Vector3(0.48f, -0.18f, 0f);
+        detectorObj.transform.localPosition = new Vector3(0.72f, -0.28f, 0f);
 
         int sueloLayer = LayerMask.NameToLayer("Suelo");
         int sueloMask = sueloLayer >= 0 ? (1 << sueloLayer) : (1 << 6);
@@ -444,8 +444,9 @@ public static class Nivel2AndCabSauAutoSetup
         cabSau.detectorBorde = detectorObj.transform;
         cabSau.detectarBordes = true;
         cabSau.frenarEnBordesDuranteSprint = true;
-        cabSau.distanciaSensorBordeX = 0.48f;
-        cabSau.longitudRayoSuelo = 1.25f;
+        cabSau.distanciaSensorBordeX = 0.72f;
+        cabSau.longitudRayoSuelo = 1.65f;
+        cabSau.distanciaSensorPared = 0.78f;
         cabSau.capaSuelo = sueloMask;
         cabSau.rangoDeteccion = 6.8f;
         cabSau.diferenciaAlturaMaxima = 2.1f;

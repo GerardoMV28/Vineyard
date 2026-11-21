@@ -48,13 +48,13 @@ public class EnemigoCabSau : MonoBehaviour
     public bool frenarEnBordesDuranteSprint = true;
 
     [Tooltip("Distancia horizontal delante del enemigo donde se comprueba si hay suelo")]
-    public float distanciaSensorBordeX = 0.48f;
+    public float distanciaSensorBordeX = 0.72f;
 
     [Tooltip("Longitud hacia abajo del rayo que verifica el suelo en el borde")]
-    public float longitudRayoSuelo = 1.15f;
+    public float longitudRayoSuelo = 1.65f;
 
     [Tooltip("Distancia frontal para detectar paredes, cajas o barriles y girar")]
-    public float distanciaSensorPared = 0.52f;
+    public float distanciaSensorPared = 0.78f;
 
     [Tooltip("Capas consideradas como suelo/obstáculo (por defecto Suelo y Default)")]
     public LayerMask capaSuelo;
@@ -190,7 +190,7 @@ public class EnemigoCabSau : MonoBehaviour
             {
                 GameObject dbObj = new GameObject("DetectorBorde");
                 dbObj.transform.SetParent(transform);
-                dbObj.transform.localPosition = new Vector3(distanciaSensorBordeX, -0.18f, 0f);
+                dbObj.transform.localPosition = new Vector3(distanciaSensorBordeX, -0.28f, 0f);
                 child = dbObj.transform;
             }
             detectorBorde = child;
@@ -418,7 +418,7 @@ public class EnemigoCabSau : MonoBehaviour
         {
             detectorBorde.localPosition = new Vector3(
                 direccionMovimiento * Mathf.Abs(distanciaSensorBordeX),
-                -0.18f,
+                -0.28f,
                 0f
             );
             return detectorBorde.position;
@@ -443,7 +443,7 @@ public class EnemigoCabSau : MonoBehaviour
         {
             detectorBorde.localPosition = new Vector3(
                 direccionMovimiento * Mathf.Abs(distanciaSensorBordeX),
-                -0.18f,
+                -0.28f,
                 0f
             );
         }
@@ -636,7 +636,7 @@ public class EnemigoCabSau : MonoBehaviour
                 }
             }
 
-            if (!pisadoDesdeArriba && otro.transform.position.y > transform.position.y + 0.42f)
+            if (!pisadoDesdeArriba && otro.transform.position.y > transform.position.y + 0.55f)
             {
                 pisadoDesdeArriba = true;
             }
@@ -691,7 +691,7 @@ public class EnemigoCabSau : MonoBehaviour
         if (estaMuerto || currentHealth >= maxHealth || Camera.main == null)
             return;
 
-        Vector3 worldPos = transform.position + new Vector3(0f, 1.05f, 0f);
+        Vector3 worldPos = transform.position + new Vector3(0f, 1.35f, 0f);
         Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPos);
         if (screenPos.z <= 0f) return;
 
