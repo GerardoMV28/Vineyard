@@ -124,6 +124,14 @@ public class MetaNivel : MonoBehaviour
 
         if (other.CompareTag("Player") || other.GetComponent<MovimientoJugador>() != null)
         {
+            // En Nivel 3 (La Cava), exigir que los 5 pedazos de la botella estén reunidos antes de completar
+            GestorBotellaNivel3 gestorBotella = GestorBotellaNivel3.Instancia ?? FindAnyObjectByType<GestorBotellaNivel3>();
+            if (gestorBotella != null && !gestorBotella.BotellaCompleta)
+            {
+                gestorBotella.MostrarAvisoFaltanPiezas();
+                return;
+            }
+
             CompletarNivel(other.gameObject);
         }
     }
@@ -184,6 +192,10 @@ public class MetaNivel : MonoBehaviour
             {
                 textoTitulo.text = tituloPersonalizado;
             }
+            else if (!string.IsNullOrEmpty(escenaNombre) && escenaNombre.Contains("3"))
+            {
+                textoTitulo.text = "¡Nivel 3 Completado!";
+            }
             else if (!string.IsNullOrEmpty(escenaNombre) && escenaNombre.Contains("2"))
             {
                 textoTitulo.text = "¡Nivel 2 Completado!";
@@ -232,6 +244,7 @@ public class MetaNivel : MonoBehaviour
     {
         Time.timeScale = 1f;
         ReiniciarContadores();
+        CheckpointCava.LimpiarCheckpoint();
 
         Scene escenaActual = SceneManager.GetActiveScene();
         int siguienteIndice = escenaActual.buildIndex + 1;

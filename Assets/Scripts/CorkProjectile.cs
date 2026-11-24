@@ -208,7 +208,8 @@ public class CorkProjectile : MonoBehaviour
 
         bool isEnemy = other.CompareTag("Enemy") ||
                        other.GetComponent<MerlotGrapeEnemy>() != null ||
-                       other.GetComponent<EnemigoCabSau>() != null;
+                       other.GetComponent<EnemigoCabSau>() != null ||
+                       other.GetComponent<EnemigoNebbiolo>() != null;
         bool isObstacle = other.CompareTag("Obstacle") || other.CompareTag("Ground") ||
                           other.layer == LayerMask.NameToLayer("Suelo");
 
@@ -221,6 +222,7 @@ public class CorkProjectile : MonoBehaviour
 
             MerlotGrapeEnemy merlot = other.GetComponent<MerlotGrapeEnemy>();
             EnemigoCabSau cabSau = other.GetComponent<EnemigoCabSau>();
+            EnemigoNebbiolo nebbiolo = other.GetComponent<EnemigoNebbiolo>();
 
             if (merlot != null)
             {
@@ -229,6 +231,10 @@ public class CorkProjectile : MonoBehaviour
             else if (cabSau != null)
             {
                 cabSau.TakeDamage(damage);
+            }
+            else if (nebbiolo != null)
+            {
+                nebbiolo.TakeDamage(damage);
             }
             else
             {

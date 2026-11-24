@@ -62,7 +62,8 @@ public static class VineyardHUDAndGameOverSetup
             return;
 
         string activeSceneName = EditorSceneManager.GetActiveScene().name;
-        if (!string.IsNullOrEmpty(activeSceneName) && activeSceneName.Contains("Nivel2"))
+        if (!string.IsNullOrEmpty(activeSceneName) &&
+            (activeSceneName.Contains("Nivel2") || activeSceneName.Contains("Nivel3")))
             return;
 
         bool needsVersionUpdate = EditorPrefs.GetInt(SetupVersionPrefKey, 0) < CurrentSetupVersion;

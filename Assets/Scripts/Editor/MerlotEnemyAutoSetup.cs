@@ -30,7 +30,8 @@ public static class MerlotEnemyAutoSetup
             return;
 
         string activeSceneName = EditorSceneManager.GetActiveScene().name;
-        if (!string.IsNullOrEmpty(activeSceneName) && activeSceneName.Contains("Nivel2"))
+        if (!string.IsNullOrEmpty(activeSceneName) &&
+            (activeSceneName.Contains("Nivel2") || activeSceneName.Contains("Nivel3")))
             return;
 
         bool needsMerlotPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(MerlotPrefabPath) == null;
