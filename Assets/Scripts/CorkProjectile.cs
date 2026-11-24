@@ -209,7 +209,8 @@ public class CorkProjectile : MonoBehaviour
         bool isEnemy = other.CompareTag("Enemy") ||
                        other.GetComponent<MerlotGrapeEnemy>() != null ||
                        other.GetComponent<EnemigoCabSau>() != null ||
-                       other.GetComponent<EnemigoNebbiolo>() != null;
+                       other.GetComponent<EnemigoNebbiolo>() != null ||
+                       other.GetComponent<JefeWineMonster>() != null;
         bool isObstacle = other.CompareTag("Obstacle") || other.CompareTag("Ground") ||
                           other.layer == LayerMask.NameToLayer("Suelo");
 
@@ -220,11 +221,16 @@ public class CorkProjectile : MonoBehaviour
         {
             Debug.Log($"[CorkProjectile] ¡Corchazo a enemigo: {other.name}! (Daño: {damage})");
 
+            JefeWineMonster boss = other.GetComponent<JefeWineMonster>();
             MerlotGrapeEnemy merlot = other.GetComponent<MerlotGrapeEnemy>();
             EnemigoCabSau cabSau = other.GetComponent<EnemigoCabSau>();
             EnemigoNebbiolo nebbiolo = other.GetComponent<EnemigoNebbiolo>();
 
-            if (merlot != null)
+            if (boss != null)
+            {
+                boss.RecibirCorchazo(damage);
+            }
+            else if (merlot != null)
             {
                 merlot.TakeDamage(damage);
             }

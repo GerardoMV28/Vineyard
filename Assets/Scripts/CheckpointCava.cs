@@ -161,6 +161,14 @@ public class CheckpointCava : MonoBehaviour
             {
                 gestor.MostrarMensajeTemporal($"¡CHECKPOINT ACTIVADO! {nombreZona} (+{Mathf.RoundToInt(curacionAlActivar)} HP)", 3.2f);
             }
+            else
+            {
+                JefeWineMonster boss = JefeWineMonster.Instancia ?? FindAnyObjectByType<JefeWineMonster>();
+                if (boss != null)
+                {
+                    boss.MostrarMensajeBanner($"¡CHECKPOINT ACTIVADO! {nombreZona} (+{Mathf.RoundToInt(curacionAlActivar)} HP)", 3.2f);
+                }
+            }
         }
     }
 
@@ -202,6 +210,14 @@ public class CheckpointCava : MonoBehaviour
                 gestor.RestaurarPiezasGuardadas(PiezasGuardadas);
             }
             gestor.MostrarMensajeTemporal($"Reapareciste en el Checkpoint #{IndiceUltimoCheckpoint + 1} (Botella: {gestor.piezasRecogidasCount}/{gestor.totalPiezas})", 3.2f);
+        }
+        else
+        {
+            JefeWineMonster boss = JefeWineMonster.Instancia ?? FindAnyObjectByType<JefeWineMonster>();
+            if (boss != null)
+            {
+                boss.MostrarMensajeBanner($"Reapareciste en el Checkpoint #{IndiceUltimoCheckpoint + 1} ({nombreZona})", 3.2f);
+            }
         }
     }
 

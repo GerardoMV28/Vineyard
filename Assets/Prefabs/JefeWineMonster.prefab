@@ -1,0 +1,343 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1388326178258996481
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5493868271613182598}
+  - component: {fileID: 7288228796554402841}
+  - component: {fileID: 8198335884971816064}
+  - component: {fileID: 4582642892803102608}
+  - component: {fileID: 2216357143507342200}
+  - component: {fileID: 3696655895777360605}
+  m_Layer: 0
+  m_Name: JefeWineMonster
+  m_TagString: Enemy
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5493868271613182598
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1388326178258996481}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!212 &7288228796554402841
+SpriteRenderer:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1388326178258996481}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 4
+  m_MaskInteraction: 0
+  m_Sprite: {fileID: 21300000, guid: 7954e66d215263246a5c76e580051e6d, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 4, y: 4}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_SpriteSortPoint: 0
+  m_BlendShapeWeights: []
+--- !u!50 &8198335884971816064
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1388326178258996481}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 4
+--- !u!61 &4582642892803102608
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1388326178258996481}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: -0.3}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 4, y: 4}
+    newSize: {x: 4, y: 4}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 2.65, y: 2.75}
+  m_EdgeRadius: 0
+--- !u!82 &2216357143507342200
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1388326178258996481}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &3696655895777360605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1388326178258996481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ff358dc871e7064b968524bcb906ca6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::JefeWineMonster
+  maxHealth: 3000
+  currentHealth: 3000
+  danoPorCorchazo: 70
+  danoContactoJugador: 24
+  cooldownContacto: 0.85
+  fuerzaEmpujeContacto: 7.5
+  arenaMinX: 215
+  arenaMaxX: 255
+  sueloY: 0
+  triggerCombateX: 216.5
+  puertaBloqueoArena: {fileID: 0}
+  velocidadPatrullaFase1: 4.3
+  velocidadPatrullaFase2: 5.8
+  velocidadEmbestidaFase1: 13.5
+  velocidadEmbestidaFase2: 16.8
+  tiempoEntreAtaquesFase1: 2
+  tiempoEntreAtaquesFase2: 1.35
+  prefabMerlot: {fileID: 7215546996843198329, guid: 6bc75405ce0cc9b47bd9ff34b690e219, type: 3}
+  prefabCabSau: {fileID: 7393336560737967241, guid: 5bbf0eb6b6eec7546891f74c30521b5d, type: 3}
+  prefabNebbiolo: {fileID: 3826742113192285891, guid: 762dca8fe49f8b24e994fab3b47ebb08, type: 3}
+  prefabCorazon: {fileID: 7526379690646530310, guid: 212477e239c805147bf4ec112279c20a, type: 3}
+  esbirrosParaCorazon: 6
+  maxEsbirrosActivosFase1: 4
+  maxEsbirrosActivosFase2: 6
+  spritesIdleMovimiento:
+  - {fileID: 21300000, guid: 7954e66d215263246a5c76e580051e6d, type: 3}
+  - {fileID: 21300000, guid: 42483ce15db8bf144a57f75cefca4fa2, type: 3}
+  - {fileID: 21300000, guid: ed18033acb6f8624cbb642afd4088277, type: 3}
+  spritesPrepararOla:
+  - {fileID: 21300000, guid: bb23bc1d28f6d364bb2295f4dad0dad3, type: 3}
+  - {fileID: 21300000, guid: 327f299342bd83d478a9c8fa9f13b313, type: 3}
+  spritesEmbestidaOla:
+  - {fileID: 21300000, guid: 715d41ca06425af43899a798fed7d0d6, type: 3}
+  - {fileID: 21300000, guid: fa5423e333272d04e8506d0401212877, type: 3}
+  - {fileID: 21300000, guid: cea3b0f183f8aef4cb789931205030a4, type: 3}
+  - {fileID: 21300000, guid: 0fd1151f5efab6c4ea8aa9b1ee6c272f, type: 3}
+  spritesInvocar:
+  - {fileID: 21300000, guid: b40a8a32ed605a24591a8cc95dc8d08b, type: 3}
+  - {fileID: 21300000, guid: 160bd9b9c17484243b5e6af7653d4f77, type: 3}
+  spritesPrepararChorro:
+  - {fileID: 21300000, guid: a8dbc41a770786d40a07ef377bacc8a6, type: 3}
+  spritesDispararChorro:
+  - {fileID: 21300000, guid: f9274b4c92f439b4a871de73482a3881, type: 3}
+  - {fileID: 21300000, guid: 0558c9f5ab4bea54ead5bc03b9f25e95, type: 3}
+  - {fileID: 21300000, guid: ffff52a991aaa12408f53f89bdcec69d, type: 3}
+  spriteErupcion: {fileID: 21300000, guid: a0d8e0460701dd349b9b15a70b890b50, type: 3}
+  spriteBotellaSellado: {fileID: 21300000, guid: 1cb72a9163fba194c9c73bfb5a69fa67, type: 3}
+  spriteAuraBotella: {fileID: 21300000, guid: 6edc0594249b0504b9e5847fb21b2485, type: 3}
+  metaFinalNivel4: {fileID: 0}
+  panelHudBoss: {fileID: 0}
+  barraVidaBoss: {fileID: 0}
+  textoVidaBoss: {fileID: 0}
+  textoFaseBoss: {fileID: 0}
+  textoEsbirrosCorazon: {fileID: 0}
+  textoBannerAviso: {fileID: 0}
+  audioSource: {fileID: 2216357143507342200}
+  sonidoRugido: {fileID: 8300000, guid: 33e41ad818a627c458e7da48cf819743, type: 3}
+  sonidoOla: {fileID: 8300000, guid: 89d13aa6c11136e49a0a1e72d2cc47d4, type: 3}
+  sonidoInvocar: {fileID: 8300000, guid: f5f5ab6e64c0e7543aff0448639a76bb, type: 3}
+  sonidoChorro: {fileID: 8300000, guid: 25f30b1c536d16a419c8f5f4574fdafa, type: 3}
+  sonidoGolpe: {fileID: 8300000, guid: a38ed7f8179534c498ff86627af4a979, type: 3}
+  sonidoCorazonSpawn: {fileID: 8300000, guid: a81ca6814c58ac84da44f70d52d4336c, type: 3}
+  sonidoSellado: {fileID: 8300000, guid: 3bc75360ea7c35c4aaad2e341c372f64, type: 3}

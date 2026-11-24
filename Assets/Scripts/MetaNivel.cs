@@ -147,7 +147,7 @@ public class MetaNivel : MonoBehaviour
         float vidaRestante = 100f;
         HealthSystem hs = playerObj != null ? playerObj.GetComponent<HealthSystem>() : null;
         if (hs == null)
-            hs = FindFirstObjectByType<HealthSystem>();
+            hs = FindAnyObjectByType<HealthSystem>();
 
         if (hs != null)
         {
@@ -192,6 +192,10 @@ public class MetaNivel : MonoBehaviour
             {
                 textoTitulo.text = tituloPersonalizado;
             }
+            else if (!string.IsNullOrEmpty(escenaNombre) && escenaNombre.Contains("4"))
+            {
+                textoTitulo.text = "¡JUEGO COMPLETADO!";
+            }
             else if (!string.IsNullOrEmpty(escenaNombre) && escenaNombre.Contains("3"))
             {
                 textoTitulo.text = "¡Nivel 3 Completado!";
@@ -203,6 +207,12 @@ public class MetaNivel : MonoBehaviour
             else
             {
                 textoTitulo.text = "¡Nivel 1 Completado!";
+            }
+
+            if (botonSiguienteNivel != null && !string.IsNullOrEmpty(escenaNombre) && escenaNombre.Contains("4"))
+            {
+                Text btnTxt = botonSiguienteNivel.GetComponentInChildren<Text>();
+                if (btnTxt != null) btnTxt.text = "JUGAR DE NUEVO";
             }
         }
 
@@ -253,13 +263,13 @@ public class MetaNivel : MonoBehaviour
         {
             SceneManager.LoadScene(siguienteIndice);
         }
+        else if (SceneManager.sceneCountInBuildSettings > 0)
+        {
+            SceneManager.LoadScene(0);
+        }
         else if (!string.IsNullOrEmpty(escenaActual.name))
         {
             SceneManager.LoadScene(escenaActual.name);
-        }
-        else
-        {
-            SceneManager.LoadScene(0);
         }
     }
 
@@ -267,7 +277,7 @@ public class MetaNivel : MonoBehaviour
     {
         if (panelNivelCompletado == null)
         {
-            Canvas canvas = FindFirstObjectByType<Canvas>();
+            Canvas canvas = FindAnyObjectByType<Canvas>();
             if (canvas != null)
             {
                 Transform panelTrans = canvas.transform.Find("LevelCompletePanel");
@@ -336,7 +346,7 @@ public class MetaNivel : MonoBehaviour
 
     private void EnsureEventSystemExists()
     {
-        if (FindFirstObjectByType<EventSystem>() == null)
+        if (FindAnyObjectByType<EventSystem>() == null)
         {
             GameObject esObj = new GameObject("EventSystem");
             esObj.AddComponent<EventSystem>();
