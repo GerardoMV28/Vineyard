@@ -200,6 +200,9 @@ public class JefeWineMonster : MonoBehaviour
             return;
         }
 
+        // Carga pasiva suave del Super Corchazo durante la pelea contra el Jefe
+        JugadorGolpeEspecial.NotificarCarga(2.0f * Time.deltaTime);
+
         // Mantener movimiento fluido en PatrullaOla
         if (estadoActual == EstadoBoss.PatrullaOla)
         {
@@ -611,6 +614,62 @@ public class JefeWineMonster : MonoBehaviour
         RecibirCorchazo(dmg);
     }
 
+    /// <summary>
+    /// Impacto del golpe especial "¡SUPER CORCHAZO DE RESERVA!" del jugador (350 HP de daño masivo).
+    /// </summary>
+    public void RecibirSuperCorchazo(int danoEspecial = 350)
+    {
+        if (EstaDerrotado) return;
+
+        if (!combateIniciado)
+        {
+            IniciarCombate();
+        }
+
+        int danoReal = Mathf.Max(100, danoEspecial);
+        currentHealth = Mathf.Max(0, currentHealth - danoReal);
+
+        ReproducirSonido(sonidoRugido, 0.85f);
+        ReproducirSonido(sonidoGolpe, 1.0f);
+
+        EnemyDeathFeedback.SpawnRuntimeGrapeJuiceSplash(
+            transform.position + new Vector3(0f, 0.4f, 0f),
+            26,
+            new Color(1.0f, 0.86f, 0.22f, 1f),
+            new Color(0.95f, 0.14f, 0.28f, 1f)
+        );
+
+        MostrarMensajeBanner($"★ ¡SUPER CORCHAZO DE RESERVA! -{danoReal} HP ★", 2.4f);
+
+        if (rutinaFlash != null) StopCoroutine(rutinaFlash);
+        rutinaFlash = StartCoroutine(FlashSuperGolpeRoutine());
+
+        if (!enFase2 && currentHealth > 0 && currentHealth <= maxHealth / 2)
+        {
+            enFase2 = true;
+            StartCoroutine(TransicionFase2Routine());
+        }
+
+        ActualizarHUD();
+
+        if (currentHealth <= 0)
+        {
+            IniciarDerrotaYSellado();
+        }
+    }
+
+    private IEnumerator FlashSuperGolpeRoutine()
+    {
+        if (sr == null) yield break;
+        Vector3 prevScale = transform.localScale;
+        sr.color = new Color(1.0f, 0.96f, 0.55f, 1f);
+        transform.localScale = new Vector3(escalaBase.x * 1.14f, escalaBase.y * 0.88f, 1f);
+        yield return new WaitForSeconds(0.14f);
+        sr.color = colorBase;
+        transform.localScale = prevScale;
+        rutinaFlash = null;
+    }
+
     private IEnumerator TransicionFase2Routine()
     {
         EstadoBoss prev = estadoActual;
@@ -653,6 +712,8 @@ public class JefeWineMonster : MonoBehaviour
         if (EstaDerrotado || LimpiandoEsbirros) return;
 
         esbirrosDerrotadosContador++;
+        // Derrotar esbirros invocados recarga rápidamente el Super Corchazo (+22%)
+        JugadorGolpeEspecial.NotificarCarga(22f);
 
         if (esbirrosDerrotadosContador >= esbirrosParaCorazon)
         {

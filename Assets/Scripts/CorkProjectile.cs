@@ -247,6 +247,9 @@ public class CorkProjectile : MonoBehaviour
                 other.SendMessage("TakeDamage", damage, SendMessageOptions.DontRequireReceiver);
             }
 
+            // Cargar el medidor del golpe especial (Super Corchazo) al acertar disparos
+            JugadorGolpeEspecial.NotificarCarga(14f);
+
             ImpactAndDestroy();
         }
         else if (isObstacle || !isTriggerCollider)

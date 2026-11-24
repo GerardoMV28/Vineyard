@@ -24,8 +24,8 @@ using UnityEngine.UI;
 [InitializeOnLoad]
 public static class Nivel4RuinasYBossAutoSetup
 {
-    private const string SetupPrefKey = "Vineyard_Nivel4_RuinasBoss_V1";
-    private const int CurrentVersion = 1;
+    private const string SetupPrefKey = "Vineyard_Nivel4_RuinasBoss_V2";
+    private const int CurrentVersion = 2;
 
     private const string Nivel1ScenePath = "Assets/Scenes/Nivel1.unity";
     private const string Nivel2ScenePath = "Assets/Scenes/Nivel2.unity";
@@ -57,6 +57,8 @@ public static class Nivel4RuinasYBossAutoSetup
     private const string SfxBossSummonPath = "Assets/Audio/SFX_BossInvocar.wav";
     private const string SfxBossStreamPath = "Assets/Audio/SFX_BossChorro.wav";
     private const string SfxBossSealPath = "Assets/Audio/SFX_BossSellado.wav";
+    private const string SfxSuperCorkPath = "Assets/Audio/SFX_SuperCorchazo.wav";
+    private const string SfxSuperCorkReadyPath = "Assets/Audio/SFX_SuperCorchazoListo.wav";
     private const string SfxCheckpointPath = "Assets/Audio/SFX_CheckpointCava.wav";
     private const string SfxAcidSplashPath = "Assets/Audio/SFX_AcidoBurbuja.wav";
     private const string SfxHealPath = "Assets/Audio/SFX_CurarCorazon.wav";
@@ -414,7 +416,7 @@ public static class Nivel4RuinasYBossAutoSetup
             "fondo1", "fondo (1)", "fondo (2)", "fondo1 (3)", "fondo1 (4)",
             "PiezasBotella_Nivel3", "GestorBotellaNivel3", "Checkpoints_Nivel3", "Checkpoints_Nivel4",
             "MetaNivel3", "MetaNivel2", "MetaNivel", "MetaNivel4_BossVictory",
-            "BotellaHUDPanel", "AvisoBotellaCavaText", "BossHUDPanel", "AvisoNivel4Text"
+            "BotellaHUDPanel", "AvisoBotellaCavaText", "BossHUDPanel", "AvisoNivel4Text", "SuperCorchazoHUDPanel"
         };
         for (int i = 0; i < toDelete.Length; i++)
         {
@@ -1172,6 +1174,96 @@ public static class Nivel4RuinasYBossAutoSetup
             bannerOutline.effectColor = Color.black;
             bannerOutline.effectDistance = new Vector2(2f, -2f);
             bannerObj.SetActive(false);
+
+            // =================================================================
+            // HUD DEL GOLPE ESPECIAL DEL JUGADOR ("SUPER CORCHAZO DE RESERVA")
+            // =================================================================
+            GameObject superPanel = new GameObject("SuperCorchazoHUDPanel");
+            superPanel.transform.SetParent(canvas.transform, false);
+            RectTransform spRt = superPanel.AddComponent<RectTransform>();
+            spRt.anchorMin = new Vector2(0f, 1f);
+            spRt.anchorMax = new Vector2(0f, 1f);
+            spRt.pivot = new Vector2(0f, 1f);
+            spRt.anchoredPosition = new Vector2(20f, -78f);
+            spRt.sizeDelta = new Vector2(290f, 50f);
+
+            Image spBg = superPanel.AddComponent<Image>();
+            spBg.color = new Color(0.14f, 0.09f, 0.03f, 0.86f);
+            Outline spOut = superPanel.AddComponent<Outline>();
+            spOut.effectColor = new Color(0.95f, 0.76f, 0.22f, 0.95f);
+            spOut.effectDistance = new Vector2(2f, -2f);
+
+            GameObject spTxtObj = new GameObject("SuperCorchazoText");
+            spTxtObj.transform.SetParent(superPanel.transform, false);
+            RectTransform spTxtRt = spTxtObj.AddComponent<RectTransform>();
+            spTxtRt.anchorMin = new Vector2(0f, 1f);
+            spTxtRt.anchorMax = new Vector2(1f, 1f);
+            spTxtRt.pivot = new Vector2(0.5f, 1f);
+            spTxtRt.anchoredPosition = new Vector2(0f, -4f);
+            spTxtRt.sizeDelta = new Vector2(-12f, 20f);
+            Text spText = spTxtObj.AddComponent<Text>();
+            spText.font = font;
+            spText.fontSize = 12;
+            spText.fontStyle = FontStyle.Bold;
+            spText.alignment = TextAnchor.MiddleCenter;
+            spText.color = new Color(0.98f, 0.90f, 0.65f, 1f);
+            spText.text = "SUPER CORCHAZO: 50%  (Pelea para cargar)";
+            spTxtObj.AddComponent<Shadow>().effectColor = Color.black;
+
+            GameObject spSliderObj = new GameObject("SuperCorchazoSlider");
+            spSliderObj.transform.SetParent(superPanel.transform, false);
+            RectTransform spSlRt = spSliderObj.AddComponent<RectTransform>();
+            spSlRt.anchorMin = new Vector2(0.5f, 0f);
+            spSlRt.anchorMax = new Vector2(0.5f, 0f);
+            spSlRt.pivot = new Vector2(0.5f, 0f);
+            spSlRt.anchoredPosition = new Vector2(0f, 7f);
+            spSlRt.sizeDelta = new Vector2(266f, 16f);
+
+            Image spSlBg = spSliderObj.AddComponent<Image>();
+            spSlBg.color = new Color(0.24f, 0.16f, 0.06f, 1f);
+
+            GameObject spFillArea = new GameObject("Fill Area");
+            spFillArea.transform.SetParent(spSliderObj.transform, false);
+            RectTransform spFaRt = spFillArea.AddComponent<RectTransform>();
+            spFaRt.anchorMin = Vector2.zero;
+            spFaRt.anchorMax = Vector2.one;
+            spFaRt.offsetMin = new Vector2(2f, 2f);
+            spFaRt.offsetMax = new Vector2(-2f, -2f);
+
+            GameObject spFill = new GameObject("Fill");
+            spFill.transform.SetParent(spFillArea.transform, false);
+            RectTransform spFillRt = spFill.AddComponent<RectTransform>();
+            spFillRt.anchorMin = Vector2.zero;
+            spFillRt.anchorMax = Vector2.one;
+            spFillRt.offsetMin = Vector2.zero;
+            spFillRt.offsetMax = Vector2.zero;
+            Image spFillImg = spFill.AddComponent<Image>();
+            spFillImg.color = new Color(0.95f, 0.72f, 0.16f, 1f);
+
+            Slider spSlider = spSliderObj.AddComponent<Slider>();
+            spSlider.interactable = false;
+            spSlider.transition = Selectable.Transition.None;
+            spSlider.fillRect = spFillRt;
+            spSlider.minValue = 0f;
+            spSlider.maxValue = 100f;
+            spSlider.value = 50f;
+
+            // Conectar JugadorGolpeEspecial al Character
+            GameObject character = GameObject.Find("Character");
+            if (character != null)
+            {
+                JugadorGolpeEspecial especial = character.GetComponent<JugadorGolpeEspecial>();
+                if (especial == null) especial = character.AddComponent<JugadorGolpeEspecial>();
+                especial.cargaMaxima = 100f;
+                especial.cargaActual = 50f;
+                especial.danoEspecialAlJefe = 350;
+                especial.barraCargaEspecial = spSlider;
+                especial.imagenRellenoBarra = spFillImg;
+                especial.textoEstadoEspecial = spText;
+                especial.sonidoLanzarSuperCorcho = AssetDatabase.LoadAssetAtPath<AudioClip>(SfxSuperCorkPath);
+                especial.sonidoCargaLista = AssetDatabase.LoadAssetAtPath<AudioClip>(SfxSuperCorkReadyPath);
+                EditorUtility.SetDirty(especial);
+            }
         }
 
         // 3. Instanciar Jefe Wine Monster en el lado derecho de la Arena (X = 247, Y = 2.0)
@@ -1556,6 +1648,26 @@ public static class Nivel4RuinasYBossAutoSetup
                 ? (Mathf.Sin(2f * Mathf.PI * 523.25f * t) + Mathf.Sin(2f * Mathf.PI * 659.25f * t) + Mathf.Sin(2f * Mathf.PI * 783.99f * t)) * 0.22f
                 : 0f;
             return (vortex + chime) * env;
+        });
+
+        // 6. Disparo potente del golpe especial "¡SUPER CORCHAZO DE RESERVA!"
+        CreateProceduralWav(SfxSuperCorkPath, 0.45f, (t, dur) =>
+        {
+            float p = t / dur;
+            float env = Mathf.Exp(-p * 3.2f);
+            float boom = Mathf.Sin(2f * Mathf.PI * Mathf.Lerp(320f, 75f, p) * t) * 0.55f;
+            float pop = Mathf.Sin(2f * Mathf.PI * Mathf.Lerp(920f, 440f, p) * t) * 0.35f;
+            float sparkle = Mathf.Sin(2f * Mathf.PI * 1320f * t) * 0.15f * (1f - p);
+            return (boom + pop + sparkle) * env;
+        });
+
+        // 7. Campanilla dorada cuando el Super Corchazo llega al 100%
+        CreateProceduralWav(SfxSuperCorkReadyPath, 0.48f, (t, dur) =>
+        {
+            float p = t / dur;
+            float env = Mathf.Sin(Mathf.PI * p);
+            float f = p < 0.45f ? 659.25f : 987.77f;
+            return (Mathf.Sin(2f * Mathf.PI * f * t) * 0.45f + Mathf.Sin(2f * Mathf.PI * (f * 1.5f) * t) * 0.25f) * env;
         });
 
         AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
