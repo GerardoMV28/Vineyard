@@ -947,13 +947,22 @@ public class JefeWineMonster : MonoBehaviour
         if (panelHudBoss != null)
             panelHudBoss.SetActive(false);
 
+        if (rutinaBanner != null)
+        {
+            StopCoroutine(rutinaBanner);
+            rutinaBanner = null;
+        }
+        if (textoBannerAviso != null)
+            textoBannerAviso.gameObject.SetActive(false);
+
         // Abrir pantalla final "¡JUEGO COMPLETADO!"
         if (metaFinalNivel4 == null)
             metaFinalNivel4 = FindAnyObjectByType<MetaNivel>();
 
         if (metaFinalNivel4 != null)
         {
-            metaFinalNivel4.tituloPersonalizado = "¡JUEGO COMPLETADO!\nWine Monster Sellado";
+            metaFinalNivel4.tituloPersonalizado =
+                "★ ¡JUEGO COMPLETADO! ★\n<size=15><color=#F5E6C8>¡Wine Monster sellado en la Botella!</color></size>";
             GameObject playerObj = playerTransform != null ? playerTransform.gameObject : null;
             metaFinalNivel4.CompletarNivel(playerObj);
         }
@@ -994,16 +1003,16 @@ public class JefeWineMonster : MonoBehaviour
         if (textoFaseBoss != null)
         {
             if (EstaDerrotado)
-                textoFaseBoss.text = "SELLADO EN LA BOTELLA SAGRADA";
+                textoFaseBoss.text = "SELLADO EN LA BOTELLA";
             else if (enFase2)
-                textoFaseBoss.text = "FASE II: FURIA CARMESÍ (¡CHORRO DE VINO!)";
+                textoFaseBoss.text = "FASE II: FURIA CARMESÍ";
             else
                 textoFaseBoss.text = "FASE I: MAREA DE LA CAVA";
         }
 
         if (textoEsbirrosCorazon != null)
         {
-            textoEsbirrosCorazon.text = $"Uvas invocadas derrotadas: {esbirrosDerrotadosContador} / {esbirrosParaCorazon}  →  ♥ Corazón";
+            textoEsbirrosCorazon.text = $"Uvas: {esbirrosDerrotadosContador}/{esbirrosParaCorazon} → ♥";
         }
     }
 

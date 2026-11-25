@@ -230,6 +230,7 @@ public class MetaNivel : MonoBehaviour
 
         if (panelNivelCompletado != null)
         {
+            panelNivelCompletado.transform.SetAsLastSibling();
             panelNivelCompletado.SetActive(true);
         }
 
