@@ -22,7 +22,7 @@ public class SuperCorchazoProyectil : MonoBehaviour
     private Vector3 posicionInicio;
     private bool impactoFinal = false;
     private float trailTimer = 0f;
-    private readonly HashSet<int> enemigosGolpeados = new HashSet<int>();
+    private readonly HashSet<EntityId> enemigosGolpeados = new HashSet<EntityId>();
 
     public static SuperCorchazoProyectil CrearYLanzar(Vector3 posicion, float dir, int danoAlJefe = 350)
     {
@@ -123,7 +123,7 @@ public class SuperCorchazoProyectil : MonoBehaviour
 
         if (merlot != null || cabSau != null || nebbiolo != null)
         {
-            int id = go.GetInstanceID();
+            EntityId id = go.GetEntityId();
             if (!enemigosGolpeados.Contains(id))
             {
                 enemigosGolpeados.Add(id);
