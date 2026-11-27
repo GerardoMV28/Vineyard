@@ -5,17 +5,23 @@ public class MovimientoJugador : MonoBehaviour
 {
     [Header("Ajustes de Movimiento")]
     public float velocidadMovimiento = 8f;
-    public float fuerzaSalto = 11.2f;
+    public float fuerzaSalto = 14.5f;
 
     [Header("Sensación de Salto y Fluidez (Plataformas)")]
+    [Tooltip("Escala de gravedad aplicada al Rigidbody2D del jugador para un salto firme y sin flotar")]
+    public float escalaGravedad = 2.5f;
+
     [Tooltip("Margen de gracia (segundos) para poder saltar justo al salir de un borde o colina")]
     public float tiempoCoyote = 0.13f;
 
     [Tooltip("Registra la tecla de salto si se pulsa justo antes de tocar el suelo")]
     public float tiempoBufferSalto = 0.14f;
 
-    [Tooltip("Gravedad extra ligera al caer para un salto más ágil y responsivo")]
-    public float multiplicadorCaida = 1.35f;
+    [Tooltip("Gravedad extra al caer para un salto más ágil y controlado")]
+    public float multiplicadorCaida = 1.55f;
+
+    [Tooltip("Gravedad extra al soltar el botón de salto temprano para controlar saltos cortos")]
+    public float multiplicadorSaltoCorto = 2.6f;
 
     [Tooltip("Permite saltar con Espacio y también con W / Flecha Arriba")]
     public bool permitirSaltoConWYFlechaArriba = true;
@@ -35,6 +41,7 @@ public class MovimientoJugador : MonoBehaviour
 
     private float movimientoHorizontal;
     private bool enElSuelo;
+    private bool manteniendoSalto;
     private float contadorCoyote;
     private float contadorBufferSalto;
     private float tiempoUltimoSalto = -1f;
@@ -91,6 +98,8 @@ public class MovimientoJugador : MonoBehaviour
 
         if (rb != null)
         {
+            if (escalaGravedad > 0f)
+                rb.gravityScale = escalaGravedad;
             rb.constraints = RigidbodyConstraints2D.FreezeRotation;
             rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
             rb.interpolation = RigidbodyInterpolation2D.Interpolate;
@@ -148,6 +157,10 @@ public class MovimientoJugador : MonoBehaviour
                             (permitirSaltoConWYFlechaArriba &&
                              (Keyboard.current.wKey.wasPressedThisFrame || Keyboard.current.upArrowKey.wasPressedThisFrame));
 
+        manteniendoSalto = Keyboard.current.spaceKey.isPressed ||
+                           (permitirSaltoConWYFlechaArriba &&
+                            (Keyboard.current.wKey.isPressed || Keyboard.current.upArrowKey.isPressed));
+
         if (saltoPulsado)
         {
             contadorBufferSalto = tiempoBufferSalto;
@@ -173,10 +186,14 @@ public class MovimientoJugador : MonoBehaviour
 
         float vy = rb.linearVelocity.y;
 
-        // Caída un poco más ágil para un salto más limpio y controlado
+        // Caída más ágil y salto variable (soltar la tecla temprano frena el ascenso)
         if (vy < -0.1f && multiplicadorCaida > 1f)
         {
             vy += Physics2D.gravity.y * rb.gravityScale * (multiplicadorCaida - 1f) * Time.fixedDeltaTime;
+        }
+        else if (vy > 0.1f && !manteniendoSalto && multiplicadorSaltoCorto > 1f)
+        {
+            vy += Physics2D.gravity.y * rb.gravityScale * (multiplicadorSaltoCorto - 1f) * Time.fixedDeltaTime;
         }
 
         rb.linearVelocity = new Vector2(movimientoHorizontal * velocidadMovimiento, vy);
