@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 
 public class GameOverManager : MonoBehaviour
@@ -13,7 +14,7 @@ public class GameOverManager : MonoBehaviour
     [Tooltip("Panel principal de Game Over dentro del Canvas (desactivado al iniciar)")]
     public GameObject gameOverPanel;
 
-    [Tooltip("Botón de 'JUGAR DE NUEVO'")]
+    [Tooltip("Botón de 'REINTENTAR'")]
     public Button restartButton;
 
     [Tooltip("Grupo de Canvas opcional para hacer un Fade-In suave al morir")]
@@ -23,7 +24,13 @@ public class GameOverManager : MonoBehaviour
     [Tooltip("Pequeña pausa antes de mostrar el Game Over para ver el golpe final")]
     public float delayBeforePause = 0.30f;
 
+    [Tooltip("Permite reintentar también presionando R o Enter en la pantalla de Game Over")]
+    public bool permitirReintentarConTeclado = true;
+
     private bool isGameOver = false;
+    private bool isPanelReady = false;
+    private bool isRestarting = false;
+    private float gameOverShownUnscaledTime = 0f;
     private Vector3 buttonBaseScale = Vector3.one;
     private float targetButtonScale = 1f;
 
@@ -44,32 +51,43 @@ public class GameOverManager : MonoBehaviour
         }
 
         EnsureEventSystemExists();
+        BuscarReferenciasUISiFaltan();
 
         if (gameOverPanel != null)
         {
             gameOverPanel.SetActive(false);
         }
 
-        if (restartButton != null)
-        {
-            buttonBaseScale = restartButton.transform.localScale;
-            restartButton.onClick.RemoveListener(RestartCurrentLevel);
-            restartButton.onClick.AddListener(RestartCurrentLevel);
-            SetupButtonHoverEffects(restartButton.gameObject);
-        }
+        VincularBotonReintentar();
     }
 
     private void Update()
     {
-        if (!isGameOver || restartButton == null)
+        if (!isGameOver)
             return;
 
-        // Animación suave de escala en el botón "JUGAR DE NUEVO" al pasar el mouse (funciona con Time.timeScale = 0)
-        restartButton.transform.localScale = Vector3.Lerp(
-            restartButton.transform.localScale,
-            buttonBaseScale * targetButtonScale,
-            Time.unscaledDeltaTime * 14f
-        );
+        // Animación suave de escala en el botón "REINTENTAR" al pasar el mouse (funciona con Time.timeScale = 0)
+        if (restartButton != null)
+        {
+            restartButton.transform.localScale = Vector3.Lerp(
+                restartButton.transform.localScale,
+                buttonBaseScale * targetButtonScale,
+                Time.unscaledDeltaTime * 14f
+            );
+        }
+
+        // Atajo cómodo de teclado (R o Enter) tras un breve margen para evitar reinicios accidentales
+        if (permitirReintentarConTeclado && isPanelReady && !isRestarting &&
+            Time.unscaledTime - gameOverShownUnscaledTime >= 0.35f &&
+            Keyboard.current != null)
+        {
+            if (Keyboard.current.rKey.wasPressedThisFrame ||
+                Keyboard.current.enterKey.wasPressedThisFrame ||
+                Keyboard.current.numpadEnterKey.wasPressedThisFrame)
+            {
+                RestartCurrentLevel();
+            }
+        }
     }
 
     /// <summary>
@@ -87,27 +105,34 @@ public class GameOverManager : MonoBehaviour
     {
         yield return new WaitForSecondsRealtime(delayBeforePause);
 
-        if (gameOverPanel == null)
-        {
-            Canvas canvas = FindFirstObjectByType<Canvas>();
-            if (canvas != null)
-            {
-                Transform found = canvas.transform.Find("GameOverPanel");
-                if (found != null)
-                {
-                    gameOverPanel = found.gameObject;
-                    panelCanvasGroup = gameOverPanel.GetComponent<CanvasGroup>();
-                }
-            }
-        }
+        BuscarReferenciasUISiFaltan();
+        VincularBotonReintentar();
 
         if (gameOverPanel != null)
         {
+            // Colocar siempre por encima de las barras de vida, jefe y banners
+            gameOverPanel.transform.SetAsLastSibling();
+
+            // Oscurecer suavemente el fondo para que el cuadro de Game Over y el botón destaquen
+            Image bgImg = gameOverPanel.GetComponent<Image>();
+            if (bgImg != null && bgImg.color.a < 0.1f)
+            {
+                bgImg.color = new Color(0.05f, 0.01f, 0.04f, 0.68f);
+            }
+
             gameOverPanel.SetActive(true);
+        }
+
+        if (restartButton != null)
+        {
+            restartButton.gameObject.SetActive(true);
+            restartButton.interactable = true;
         }
 
         if (panelCanvasGroup != null)
         {
+            panelCanvasGroup.interactable = true;
+            panelCanvasGroup.blocksRaycasts = true;
             panelCanvasGroup.alpha = 0f;
             float elapsed = 0f;
             float duration = 0.25f;
@@ -120,16 +145,22 @@ public class GameOverManager : MonoBehaviour
             panelCanvasGroup.alpha = 1f;
         }
 
+        isPanelReady = true;
+        gameOverShownUnscaledTime = Time.unscaledTime;
+
         // Pausar el juego mientras está la pantalla de Game Over
         Time.timeScale = 0f;
     }
 
     /// <summary>
-    /// Método público conectado al OnClick() del botón "JUGAR DE NUEVO".
-    /// Restablece Time.timeScale = 1 y recarga la escena actual.
+    /// Método público conectado al OnClick() del botón "REINTENTAR".
+    /// Restablece Time.timeScale = 1 y recarga la escena actual (respetando checkpoints si aplica).
     /// </summary>
     public void RestartCurrentLevel()
     {
+        if (isRestarting) return;
+        isRestarting = true;
+
         TitleScreenOpener.OmitirOpenerEnReinicio = true;
         Time.timeScale = 1f;
         Scene currentScene = SceneManager.GetActiveScene();
@@ -137,6 +168,50 @@ public class GameOverManager : MonoBehaviour
             SceneManager.LoadScene(currentScene.buildIndex);
         else
             SceneManager.LoadScene(currentScene.name);
+    }
+
+    private void BuscarReferenciasUISiFaltan()
+    {
+        if (gameOverPanel == null)
+        {
+            Canvas canvas = FindFirstObjectByType<Canvas>();
+            if (canvas != null)
+            {
+                Transform found = canvas.transform.Find("GameOverPanel");
+                if (found != null)
+                {
+                    gameOverPanel = found.gameObject;
+                }
+            }
+        }
+
+        if (gameOverPanel != null)
+        {
+            if (panelCanvasGroup == null)
+                panelCanvasGroup = gameOverPanel.GetComponent<CanvasGroup>();
+
+            if (restartButton == null)
+            {
+                Transform btnTrans = gameOverPanel.transform.Find("GameOverArtwork/RestartButton");
+                if (btnTrans != null)
+                    restartButton = btnTrans.GetComponent<Button>();
+                else
+                    restartButton = gameOverPanel.GetComponentInChildren<Button>(true);
+            }
+        }
+    }
+
+    private void VincularBotonReintentar()
+    {
+        if (restartButton == null) return;
+
+        buttonBaseScale = restartButton.transform.localScale;
+        if (buttonBaseScale.sqrMagnitude < 0.001f)
+            buttonBaseScale = Vector3.one;
+
+        restartButton.onClick.RemoveListener(RestartCurrentLevel);
+        restartButton.onClick.AddListener(RestartCurrentLevel);
+        SetupButtonHoverEffects(restartButton.gameObject);
     }
 
     private void SetupButtonHoverEffects(GameObject btnObj)

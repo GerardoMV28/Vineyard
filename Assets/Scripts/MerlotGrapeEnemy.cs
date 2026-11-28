@@ -561,29 +561,29 @@ public class MerlotGrapeEnemy : MonoBehaviour
     {
         if (cachedSeedSprite != null) return cachedSeedSprite;
 
-        int w = 14, h = 10;
+        int w = 20, h = 16;
         Texture2D tex = new Texture2D(w, h, TextureFormat.RGBA32, false);
         tex.filterMode = FilterMode.Point;
         Color clear = new Color(0, 0, 0, 0);
-        Color outline = new Color(0.12f, 0.06f, 0.04f, 1f);
-        Color seedBrown = new Color(0.58f, 0.36f, 0.20f, 1f);
-        Color seedHighlight = new Color(0.78f, 0.56f, 0.36f, 1f);
+        Color outline = new Color(0.14f, 0.06f, 0.11f, 1f);
+        Color seedGold = new Color(0.96f, 0.84f, 0.47f, 1f);
+        Color seedHighlight = new Color(1.0f, 0.97f, 0.76f, 1f);
 
         for (int y = 0; y < h; y++)
         {
             for (int x = 0; x < w; x++)
             {
-                float dx = (x - w * 0.5f) / (w * 0.42f);
-                float dy = (y - h * 0.5f) / (h * 0.42f);
+                float dx = (x - w * 0.5f) / (w * 0.44f);
+                float dy = (y - h * 0.5f) / (h * 0.44f);
                 float d = dx * dx + dy * dy;
                 if (d > 1.0f) tex.SetPixel(x, y, clear);
-                else if (d > 0.65f) tex.SetPixel(x, y, outline);
-                else if (y > h * 0.55f && x > w * 0.4f) tex.SetPixel(x, y, seedHighlight);
-                else tex.SetPixel(x, y, seedBrown);
+                else if (d > 0.70f) tex.SetPixel(x, y, outline);
+                else if (y > h * 0.52f && x < w * 0.62f) tex.SetPixel(x, y, seedHighlight);
+                else tex.SetPixel(x, y, seedGold);
             }
         }
         tex.Apply();
-        cachedSeedSprite = Sprite.Create(tex, new Rect(0, 0, w, h), new Vector2(0.5f, 0.5f), 48f);
+        cachedSeedSprite = Sprite.Create(tex, new Rect(0, 0, w, h), new Vector2(0.5f, 0.5f), 32f);
         return cachedSeedSprite;
     }
 

@@ -20,7 +20,7 @@ public class GrapeSeedProjectile : MonoBehaviour
 
     [Header("Tamaño y Animación")]
     [Tooltip("Escala de la semilla")]
-    public float seedScale = 0.75f;
+    public float seedScale = 0.65f;
 
     [Tooltip("Velocidad de rotación suave en vuelo")]
     public float spinSpeed = 240f;
