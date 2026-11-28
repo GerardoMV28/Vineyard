@@ -74,6 +74,7 @@ public class MetaNivel : MonoBehaviour
     public float volumenMeta = 0.9f;
 
     private bool nivelCompletado = false;
+    private bool cargandoSiguienteEscena = false;
     private int puntosMaximosNivelActual = 1000;
     private Vector3 buttonBaseScale = Vector3.one;
     private float targetButtonScale = 1f;
@@ -752,11 +753,40 @@ public class MetaNivel : MonoBehaviour
     /// </summary>
     public void CargarSiguienteNivel()
     {
+        if (cargandoSiguienteEscena)
+            return;
+        cargandoSiguienteEscena = true;
+
         Time.timeScale = 1f;
         ReiniciarContadores();
         CheckpointCava.LimpiarCheckpoint();
 
         Scene escenaActual = SceneManager.GetActiveScene();
+        string nombreActual = escenaActual.name ?? "";
+
+        // Garantizar el orden correcto Nivel1 -> Nivel2 -> Nivel3 -> Nivel4 -> Nivel1
+        string siguientePorNombre = null;
+        bool reiniciaJuego = false;
+        if (nombreActual.Contains("1"))
+            siguientePorNombre = "Nivel2";
+        else if (nombreActual.Contains("2"))
+            siguientePorNombre = "Nivel3";
+        else if (nombreActual.Contains("3"))
+            siguientePorNombre = "Nivel4";
+        else if (nombreActual.Contains("4"))
+        {
+            siguientePorNombre = "Nivel1";
+            reiniciaJuego = true;
+        }
+
+        if (!string.IsNullOrEmpty(siguientePorNombre) && Application.CanStreamedLevelBeLoaded(siguientePorNombre))
+        {
+            if (reiniciaJuego)
+                ReiniciarCampana();
+            SceneManager.LoadScene(siguientePorNombre);
+            return;
+        }
+
         int siguienteIndice = escenaActual.buildIndex + 1;
 
         if (escenaActual.buildIndex >= 0 && siguienteIndice < SceneManager.sceneCountInBuildSettings)
